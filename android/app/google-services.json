@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1033751782984",
+    "project_id": "famlicious-3c597",
+    "storage_bucket": "famlicious-3c597.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033751782984:android:92901117675793553f1a7d",
+        "android_client_info": {
+          "package_name": "com.example.famlicious"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033751782984-npmvv2kq92ps5eu58uoi9ceplcu7jurl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.famlicious",
+            "certificate_hash": "83c489e0a23166993e66f71299603043797df64b"
+          }
+        },
+        {
+          "client_id": "1033751782984-gljaoram1vkmtmlh3566dm41sbetm2pm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCShkrs4C9aAAh59Fks2qRf8jmHUcHrK4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1033751782984-gljaoram1vkmtmlh3566dm41sbetm2pm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
