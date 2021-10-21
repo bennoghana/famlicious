@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:famlicious/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:unicons/unicons.dart';
+import 'package:famlicious/manager/auth_manager.dart';
 
 class CreateAccountsView extends StatefulWidget {
   CreateAccountsView({Key? key}) : super(key: key);
@@ -13,10 +15,12 @@ class CreateAccountsView extends StatefulWidget {
 }
 
 class _CreateAccountsViewState extends State<CreateAccountsView> {
+  _CreateAccountsViewState();
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final AuthManager _authManager = AuthManager();
   final emailRegexp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final ImagePicker _ImagePicker = ImagePicker();
@@ -51,33 +55,33 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+      appBar: AppBar(),
+      body: SafeArea(
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
+          child: ListView(padding: const EdgeInsets.all(16), children: [
             // CircleAvatar(
             //     radius: 65,
             //     backgroundImage: _imageFile == null
             //         ? AssetImage('assets/images/ive.jpg')
             //         : FileImage(_imageFile!) as ImageProvider),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(90),
-              child: _imageFile == null
-                  ? Image.asset(
-                      'assets/images/ive.jpg',
-                      width: 130,
-                      height: 130,
-                      fit: BoxFit.contain,
-                    )
-                  : Image.file(
-                      _imageFile!,
-                      width: 130,
-                      height: 130,
-                      fit: BoxFit.cover,
-                    ),
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(90),
+                child: _imageFile == null
+                    ? Image.asset(
+                        'assets/images/ive.jpg',
+                        width: 130,
+                        height: 130,
+                        fit: BoxFit.contain,
+                      )
+                    : Image.file(
+                        _imageFile!,
+                        width: 130,
+                        height: 130,
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
             TextButton.icon(
                 onPressed: () {
@@ -85,7 +89,7 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
                       context: context,
                       builder: (context) {
                         return SizedBox(
-                          height: 200,
+                          height: 100,
                           child: Column(
                             children: [
                               TextButton.icon(
@@ -96,9 +100,6 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
                                   },
                                   icon: Icon(UniconsLine.camera),
                                   label: Text("Select a Picture from Camera")),
-                              SizedBox(
-                                height: 15,
-                              ),
                               TextButton.icon(
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -113,7 +114,14 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
                       });
                 },
                 icon: Icon(UniconsLine.camera),
-                label: Text("Select a profile picture")),
+                label: Text(
+                  "Select a profile picture",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: Colors.grey),
+                )),
+
             const SizedBox(
               height: 15,
             ),
@@ -121,7 +129,9 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
               controller: _nameController,
               keyboardType: TextInputType.name,
               textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(label: Text('Full Name')),
+              decoration: const InputDecoration(
+                labelText: 'Full Name',
+              ),
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Full Name is required!';
@@ -135,7 +145,7 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(label: Text('Email Address')),
+                decoration: const InputDecoration(labelText: 'Email Address'),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return "email is required";
@@ -152,7 +162,7 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
                 controller: _passwordController,
                 keyboardType: TextInputType.emailAddress,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(label: Text('Email Address')),
+                decoration: const InputDecoration(labelText: 'Email Address'),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return "Password is required";
@@ -164,32 +174,63 @@ class _CreateAccountsViewState extends State<CreateAccountsView> {
             const SizedBox(
               height: 15,
             ),
-            TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // all good
-                    String name = _nameController.text;
-                    String email = _emailController.text;
-                    String password = _passwordController.text;
-
-                  } else {
-                    Fluttertoast.showToast(
-                        msg: "Please Check Input fields",
-                        toastLength: Toast.LENGTH_LONG,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.red,
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                  }
-                },
-                child: const Text('Create Account'),
-                style: TextButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).buttonTheme.colorScheme!.background))
+            _authManager.isLoading
+                ? Center(child: const CircularProgressIndicator.adaptive())
+                : TextButton(
+                    child: const Text('Create Account'),
+                    style: TextButton.styleFrom(
+                        backgroundColor: Theme.of(context)
+                            .buttonTheme
+                            .colorScheme!
+                            .background),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        // all good
+                        String name = _nameController.text;
+                        String email = _emailController.text;
+                        String password = _passwordController.text;
+                        bool isCreated = await _authManager.creatNewUser(
+                            name: name,
+                            email: email,
+                            password: password,
+                            imageFile: _imageFile!);
+                        if (isCreated) {
+                          Fluttertoast.showToast(
+                              msg: "Welcome!,$name",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: _authManager.message,
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeView()),
+                              (route) => false);
+                        }
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Please Check Input fields",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      }
+                    })
           ]),
         ),
       ),
-    ));
+    );
   }
 }
